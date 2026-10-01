@@ -29,7 +29,7 @@ curl -s localhost:8000/health | python -m json.tool
 ```
 
 ## Pipeline
-
+- Green run evidence: https://github.com/cewamahan-ui/Week-8-Capstone-CI-CD-Pipeline-for-Versioned-AI-MCP-Health/actions/runs/36891631794
 - GitHub Actions: `.github/workflows/ci.yml` - jobs `lint-test`, `eval`, `mcp_health`, `build-deploy`; triggers on PR + main + `workflow_dispatch`
 - Azure DevOps twin: `azure-pipelines.yml` - stages `lint_test`, `eval`, `mcp_health`, `build_deploy`
 - Local dry run (act / minute fallback): `python scripts/run_pipeline.py` (or `bash scripts/run_pipeline_local.sh`) - mirrors every stage with the same exit-code contract
