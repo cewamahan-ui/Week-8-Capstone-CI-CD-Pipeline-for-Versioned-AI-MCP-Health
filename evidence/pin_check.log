@@ -1,0 +1,7 @@
+$ C:\Users\RAJ\AppData\Local\Python\pythoncore-3.14-64\python.exe check_prompt_pin.py --allow-candidate
+(expected exit 0; actual exit 0)
+----------------------------------------------------------------------
+PIN-CHECK OK: v1.2.0 sha=5b50e6eafb2ff2ff
+PIN-CHECK OK: candidate v1.3.0-candidate present
+PIN-CHECK OK: config prompt_version=1.2.0 exists
+PIN-CHECK PASS

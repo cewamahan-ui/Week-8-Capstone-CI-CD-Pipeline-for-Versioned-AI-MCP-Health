@@ -1,0 +1,154 @@
+# Week 8 capstone - gated CI/CD for versioned AI + MCP health.
+#
+# Stage order (fail fast, fail closed):
+#   lint-test  -> ruff + pytest + prompt pin integrity
+#   eval       -> golden-set regression gate (fails the pipeline on drop)
+#   mcp_health -> MCP handshake/tool probe (fails the pipeline on bad probe)
+#   build-deploy -> docker build/tag (deploy stub: compose up on the runner)
+#
+# main runs everything; PRs run lint-test + eval + mcp_health so a
+# broken prompt or MCP change is caught before merge. No cloud
+# account needed: the deploy stage is a build+tag with a compose
+# smoke start, recorded with the image digest in the job summary.
+
+name: afyaplus-week8-ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch: {}   # manual trigger for minute-limited accounts
+
+env:
+  APP_VERSION: 1.3.0-candidate
+  RELEASE_TAG: v1.3.0-candidate
+  PROMPT_VERSION: "1.2.0"
+
+jobs:
+  lint-test:
+    name: lint-test (ruff + pytest + pin)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ruff lint
+        run: |
+          pip install ruff
+          ruff check .
+
+      - name: Prompt pin integrity (fails closed on SHA drift)
+        run: python check_prompt_pin.py --allow-candidate
+
+      - name: Unit tests
+        run: pytest -q tests/
+
+  eval:
+    name: eval (golden-set regression gate)
+    runs-on: ubuntu-latest
+    needs: lint-test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # The gate: non-zero exit here blocks the pipeline. The threshold
+      # (0.85) and metric live in evals/golden.jsonl, not in the YAML.
+      - name: Golden-set eval gate
+        run: python eval_prompts.py
+
+      - name: Upload eval results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: fixtures/responses/
+          if-no-files-found: ignore
+
+  mcp_health:
+    name: mcp-health (handshake + tools probe)
+    runs-on: ubuntu-latest
+    needs: eval
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Stub probe (no live MCP on the runner): same assertions, same
+      # exit-code contract as the production HTTP probe. A failing
+      # probe exits 1 and the deploy stage never runs.
+      - name: MCP health gate (stub, in-process)
+        run: python scripts/check_mcp_health.py
+
+      - name: MCP health gate (manifest contract)
+        run: python scripts/check_mcp_health.py --manifest logistics_manifest.json
+
+      - name: MCP health self-test (prove the gate can fail)
+        run: |
+          if python scripts/check_mcp_health.py --self-test; then
+            echo "::error::self-test passed but should have failed"
+            exit 1
+          else
+            echo "self-test failed as designed - gate is live"
+          fi
+
+  build-deploy:
+    name: build-deploy (docker build, tag, compose smoke)
+    runs-on: ubuntu-latest
+    needs: [eval, mcp_health]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image (prompt bundle baked in, pin checked in Dockerfile)
+        run: |
+          docker build -f deploy/Dockerfile \
+            --build-arg APP_VERSION=${APP_VERSION} \
+            --build-arg RELEASE_TAG=${RELEASE_TAG} \
+            --build-arg BUILD_SHA=${GITHUB_SHA::8} \
+            -t afyaplus-triage:${RELEASE_TAG} \
+            -t afyaplus-triage:sha-${GITHUB_SHA::8} .
+
+      - name: Record image digest (runbook evidence)
+        run: |
+          DIGEST=$(docker images --digests afyaplus-triage --format '{{.Digest}}' | head -1)
+          echo "image=afyaplus-triage:${RELEASE_TAG}" >> $GITHUB_STEP_SUMMARY
+          echo "digest=${DIGEST}"                   >> $GITHUB_STEP_SUMMARY
+          echo "release=${RELEASE_TAG}"             >> $GITHUB_STEP_SUMMARY
+          echo "commit=${GITHUB_SHA}"               >> $GITHUB_STEP_SUMMARY
+          echo "Image digest recorded for the runbook."
+
+      # Deploy stub: no Kubernetes/cloud account in the capstone, so
+      # "deploy" = the tagged image exists and the compose definition
+      # is what the laptop/runner would run. PROMPT_VERSION pins 1.2.0.
+      - name: Deploy stub (compose definition check)
+        run: |
+          echo "Deploy target: docker compose -f deploy/docker-compose.yml up -d"
+          echo "PROMPT_VERSION=${PROMPT_VERSION} (rollback pin present)"
+          docker compose -f deploy/docker-compose.yml config > /dev/null && \
+            echo "compose file valid"

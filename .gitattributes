@@ -1,0 +1,4 @@
+# Keep line endings stable so prompt SHAs do not drift across OSes.
+* text=auto eol=lf
+*.png binary
+*.jpg binary

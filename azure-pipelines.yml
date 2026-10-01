@@ -1,0 +1,142 @@
+# Azure DevOps twin of .github/workflows/ci.yml (Deliverable 2).
+# Same stages, same order, same fail-closed gates. For cohort members
+# without Azure DevOps access this file is the config-as-code
+# artefact; scripts/run_pipeline_local.sh mirrors each stage locally
+# and its output counts as run evidence per the brief.
+
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+variables:
+  APP_VERSION: '1.3.0-candidate'
+  RELEASE_TAG: 'v1.3.0-candidate'
+  PROMPT_VERSION: '1.2.0'
+  pythonVersion: '3.12'
+
+stages:
+  - stage: lint_test
+    displayName: lint-test (ruff + pytest + pin)
+    jobs:
+      - job: lint_test_job
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(pythonVersion)'
+
+          - script: |
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+              pip install ruff
+            displayName: Install dependencies
+
+          - script: ruff check .
+            displayName: Ruff lint
+
+          - script: python check_prompt_pin.py --allow-candidate
+            displayName: Prompt pin integrity
+
+          - script: pytest -q tests/
+            displayName: Unit tests
+
+  - stage: eval
+    displayName: eval (golden-set regression gate)
+    dependsOn: lint_test
+    condition: succeeded()
+    jobs:
+      - job: eval_job
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(pythonVersion)'
+
+          - script: |
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+            displayName: Install dependencies
+
+          # Non-zero exit here fails the stage and blocks the pipeline.
+          - script: python eval_prompts.py
+            displayName: Golden-set eval gate
+
+          - task: PublishBuildArtifacts@1
+            condition: succeededOrFailed()
+            displayName: Publish eval results
+            inputs:
+              pathToPublish: 'fixtures/responses'
+              artifactName: eval-results
+              publishLocation: 'Container'
+
+  - stage: mcp_health
+    displayName: mcp-health (handshake + tools probe)
+    dependsOn: eval
+    condition: succeeded()
+    jobs:
+      - job: mcp_health_job
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(pythonVersion)'
+
+          - script: |
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+            displayName: Install dependencies
+
+          - script: python scripts/check_mcp_health.py
+            displayName: MCP health gate (stub, in-process)
+
+          - script: python scripts/check_mcp_health.py --manifest logistics_manifest.json
+            displayName: MCP health gate (manifest contract)
+
+          - script: |
+              python scripts/check_mcp_health.py --self-test && exit 1 || echo "self-test failed as designed - gate is live"
+            displayName: MCP health self-test
+
+  - stage: build_deploy
+    displayName: build-deploy (docker build, tag, deploy stub)
+    dependsOn:
+      - eval
+      - mcp_health
+    condition: succeeded()
+    jobs:
+      - job: build_deploy_job
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: DockerInstaller@0
+            inputs:
+              dockerVersion: '26.0.0'
+
+          - script: |
+              docker build -f deploy/Dockerfile \
+                --build-arg APP_VERSION=$(APP_VERSION) \
+                --build-arg RELEASE_TAG=$(RELEASE_TAG) \
+                --build-arg BUILD_SHA=$(Build.SourceVersion) \
+                -t afyaplus-triage:$(RELEASE_TAG) \
+                -t afyaplus-triage:sha-$(Build.SourceVersion) .
+            displayName: Build and tag image
+
+          - script: |
+              DIGEST=$(docker images --digests afyaplus-triage --format '{{.Digest}}' | head -1)
+              echo "##vso[task.setvariable variable=imageDigest]$DIGEST"
+              echo "image=afyaplus-triage:$(RELEASE_TAG) digest=$DIGEST release=$(RELEASE_TAG)"
+            displayName: Record image digest
+
+          - script: |
+              echo "Deploy target: docker compose -f deploy/docker-compose.yml up -d"
+              echo "PROMPT_VERSION=$(PROMPT_VERSION) (rollback pin present)"
+              docker compose -f deploy/docker-compose.yml config > /dev/null && echo "compose file valid"
+            displayName: Deploy stub (compose definition check)

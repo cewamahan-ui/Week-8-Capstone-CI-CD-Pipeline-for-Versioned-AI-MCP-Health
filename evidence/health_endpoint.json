@@ -1,0 +1,16 @@
+# GET /health captured via FastAPI TestClient
+# (identical to: uvicorn prompt_app:app --port 8000 && curl -s localhost:8000/health)
+{
+    "service": "afyaplus-triage",
+    "status": "ok",
+    "app_version": "1.3.0-candidate",
+    "prompt_version": "1.2.0",
+    "prompt_sha256_16": "5b50e6eafb2ff2ff",
+    "model_version": "triage-stub-v1",
+    "mcp_server_version": "1.3.0-candidate",
+    "release_tag": "v1.3.0-candidate",
+    "pinned_prompt_version": "1.2.0",
+    "candidate_rollout_percent": 0,
+    "build_sha": "dev",
+    "uptime_seconds": 0.24
+}

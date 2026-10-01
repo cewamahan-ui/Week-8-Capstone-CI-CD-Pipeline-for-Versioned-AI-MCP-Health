@@ -1,0 +1,146 @@
+$ C:\Users\RAJ\AppData\Local\Python\pythoncore-3.14-64\python.exe scripts/run_pipeline.py
+(expected exit 0; actual exit 0)
+----------------------------------------------------------------------
+All checks passed!
+PIN-CHECK OK: v1.2.0 sha=5b50e6eafb2ff2ff
+PIN-CHECK OK: candidate v1.3.0-candidate present
+PIN-CHECK OK: config prompt_version=1.2.0 exists
+PIN-CHECK PASS
+...........................                                              [100%]
+============================== warnings summary ===============================
+tests/test_triage_stub.py::test_app_health_shape_reports_versions
+  C:\Users\RAJ\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+27 passed, 1 warning in 0.95s
+EVAL {"metric": "urgency_agreement", "eval_score": 1.0, "threshold": 0.85, "eligible_cases": 11, "quarantined_count": 1, "hard_failures": [], "prompt_version": "1.2.0", "prompt_sha256_16": "5b50e6eafb2ff2ff", "passed": true, "results_file": "fixtures\\responses\\5b50e6eafb2ff2ff.json"}
+EVAL PASS
+{
+  "mode": "stub:in-process",
+  "probe": {
+    "handshake": true,
+    "protocol": "in-process",
+    "tools": [
+      "find_clinic_by_county",
+      "plan_delivery_route"
+    ],
+    "resources": [
+      "clinics://catalog"
+    ],
+    "server_version": "1.3.0-candidate",
+    "release_tag": "v1.3.0-candidate",
+    "calls": {
+      "find_clinic_by_county": {
+        "ok": true,
+        "sample": {
+          "county": "nairobi",
+          "count": 2,
+          "clinics": [
+            {
+              "id": "CL-001",
+              "name": "Kenyatta National Hospital",
+              "county": "Nairobi",
+              "lat": -1.3013,
+              "lon": 36.807,
+              "services": [
+                "emergency",
+                "obstetric",
+                "pediatric",
+                "surgery",
+                "imaging"
+              ],
+              "opening_hours": "24/7",
+              "phone": "+254-20-2726300"
+            },
+            {
+              "id": "CL-002",
+              "name": "Mbagathi District Hospital",
+              "county": "Nairobi",
+              "lat": -1.31,
+              "lon": 36.79,
+              "services": [
+                "emergency",
+                "obstetric",
+                "pediatric"
+              ],
+              "opening_hours": "24/7",
+              "phone": "+254-20-2724711"
+            }
+          ]
+        }
+      },
+      "plan_delivery_route": {
+        "ok": true,
+        "sample": {
+          "origin": "nairobi",
+          "destination_county": "kisumu",
+          "vehicle": "van",
+          "heuristic": "nearest-neighbour greedy, not optimal",
+          "stops": [
+            {
+              "clinic_id": "CL-003",
+              "name": "Jaramogi Oginga Odinga Teaching & Referral Hospital",
+              "leg_km": 264.5
+            },
+            {
+              "clinic_id": "CL-004",
+              "name": "Kisumu County Referral Hospital",
+              "leg_km": 1.3
+            }
+          ],
+          "total_km": 265.8,
+          "estimated_hours": 4.43
+        }
+      }
+    }
+  },
+  "problems": []
+}
+MCP-HEALTH PASS: handshake ok, tools=['find_clinic_by_county', 'plan_delivery_route'], version=1.3.0-candidate
+{
+  "mode": "manifest:logistics_manifest.json",
+  "probe": {
+    "handshake": true,
+    "protocol": "manifest",
+    "tools": [
+      "find_clinic_by_county",
+      "plan_delivery_route"
+    ],
+    "resources": [
+      "clinics://catalog"
+    ],
+    "server_version": "1.3.0-candidate",
+    "release_tag": "v1.3.0-candidate"
+  },
+  "problems": []
+}
+MCP-HEALTH PASS: handshake ok, tools=['find_clinic_by_county', 'plan_delivery_route'], version=1.3.0-candidate
+
+===================================================================
+ STAGE 1: lint (ruff)
+===================================================================
+[PASS] lint (ruff)
+===================================================================
+ STAGE 2: pin (prompt integrity)
+===================================================================
+[PASS] pin (prompt integrity)
+===================================================================
+ STAGE 3: test (pytest)
+===================================================================
+[PASS] test (pytest)
+===================================================================
+ STAGE 4: eval (golden-set gate)
+===================================================================
+[PASS] eval (golden-set gate)
+===================================================================
+ STAGE 5: mcp_health (stub probe)
+===================================================================
+[PASS] mcp_health (stub probe)
+===================================================================
+ STAGE 6: mcp_health (manifest)
+===================================================================
+[PASS] mcp_health (manifest)
+
+ALL STAGES PASSED - deploy stub would proceed: docker compose -f deploy/docker-compose.yml up -d
+2026-10-01 18:55:40,151 INFO afyaplus.mcp.versioned find_clinic_by_county ok trace_id=- county=nairobi

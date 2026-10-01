@@ -1,0 +1,36 @@
+# Week 8 capstone ignores (same habits as Weeks 6-7)
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.coverage
+.ruff_cache/
+
+# Virtual envs
+.venv/
+venv/
+ENV/
+
+# Secrets - NEVER commit
+.env
+.env.local
+.env.*.local
+secrets/
+*.key
+
+# act (local GitHub Actions runner) artifacts
+.actrc
+artifacts/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+nul

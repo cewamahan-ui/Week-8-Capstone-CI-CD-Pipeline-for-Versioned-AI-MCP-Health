@@ -1,0 +1,102 @@
+[
+  {
+    "id": "CL-001",
+    "name": "Kenyatta National Hospital",
+    "county": "Nairobi",
+    "lat": -1.3013,
+    "lon": 36.8070,
+    "services": ["emergency", "obstetric", "pediatric", "surgery", "imaging"],
+    "opening_hours": "24/7",
+    "phone": "+254-20-2726300"
+  },
+  {
+    "id": "CL-002",
+    "name": "Mbagathi District Hospital",
+    "county": "Nairobi",
+    "lat": -1.3100,
+    "lon": 36.7900,
+    "services": ["emergency", "obstetric", "pediatric"],
+    "opening_hours": "24/7",
+    "phone": "+254-20-2724711"
+  },
+  {
+    "id": "CL-003",
+    "name": "Jaramogi Oginga Odinga Teaching & Referral Hospital",
+    "county": "Kisumu",
+    "lat": -0.0917,
+    "lon": 34.7680,
+    "services": ["emergency", "obstetric", "pediatric", "surgery", "imaging", "icu"],
+    "opening_hours": "24/7",
+    "phone": "+254-57-2020801"
+  },
+  {
+    "id": "CL-004",
+    "name": "Kisumu County Referral Hospital",
+    "county": "Kisumu",
+    "lat": -0.1000,
+    "lon": 34.7600,
+    "services": ["emergency", "obstetric", "pediatric"],
+    "opening_hours": "24/7",
+    "phone": "+254-57-2021200"
+  },
+  {
+    "id": "CL-005",
+    "name": "Coast General Teaching & Referral Hospital",
+    "county": "Mombasa",
+    "lat": -4.0500,
+    "lon": 39.6600,
+    "services": ["emergency", "obstetric", "pediatric", "surgery"],
+    "opening_hours": "24/7",
+    "phone": "+254-41-2220470"
+  },
+  {
+    "id": "CL-006",
+    "name": "Moi Teaching & Referral Hospital",
+    "county": "Uasin Gishu",
+    "lat": 0.5143,
+    "lon": 35.2698,
+    "services": ["emergency", "obstetric", "pediatric", "surgery", "imaging", "icu"],
+    "opening_hours": "24/7",
+    "phone": "+254-53-2033471"
+  },
+  {
+    "id": "CL-007",
+    "name": "Nakuru Level 5 Hospital",
+    "county": "Nakuru",
+    "lat": -0.3031,
+    "lon": 36.0800,
+    "services": ["emergency", "obstetric", "pediatric", "surgery"],
+    "opening_hours": "24/7",
+    "phone": "+254-51-2215580"
+  },
+  {
+    "id": "CL-008",
+    "name": "Machakos Level 5 Hospital",
+    "county": "Machakos",
+    "lat": -1.5167,
+    "lon": 37.2667,
+    "services": ["emergency", "obstetric", "pediatric"],
+    "opening_hours": "24/7",
+    "phone": "+254-44-20215"
+  },
+  {
+    "id": "CL-009",
+    "name": "Nyeri County Referral Hospital",
+    "county": "Nyeri",
+    "lat": -0.4172,
+    "lon": 36.9476,
+    "services": ["emergency", "obstetric", "pediatric", "surgery"],
+    "opening_hours": "24/7",
+    "phone": "+254-61-2030602"
+  },
+  {
+    "id": "CL-010",
+    "name": "Garissa Level 5 Hospital",
+    "county": "Garissa",
+    "lat": -0.4532,
+    "lon": 39.6461,
+    "services": ["emergency", "obstetric", "pediatric"],
+    "opening_hours": "24/7",
+    "phone": "+254-46-2522"
+  }
+]

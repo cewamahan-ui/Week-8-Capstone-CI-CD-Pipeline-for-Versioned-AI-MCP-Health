@@ -1,0 +1,13 @@
+{"_meta": true, "metric": "urgency_agreement", "threshold": 0.85, "note": "Golden set for the triage prompt regression gate. One JSON object per line; the _meta line carries the metric and threshold. Labels are the regression floor - do not edit without clinical_ops sign-off recorded in the PR."}
+{"id": "G-001", "input": "58-year-old man, crushing chest pain and shortness of breath for 20 minutes", "label": "ESI-2", "disposition": "ED", "must_not": ["PRIMARY_CARE", "SELF_CARE"]}
+{"id": "G-002", "input": "4-year-old unconscious after falling from a tree, not responding to voice", "label": "ESI-1", "disposition": "ED", "must_not": ["URGENT_CLINIC", "PRIMARY_CARE", "SELF_CARE"]}
+{"id": "G-003", "input": "34-year-old woman, 7 months pregnant, persistent vomiting for two days, cannot keep water down", "label": "ESI-3", "disposition": "URGENT_CLINIC", "must_not": ["SELF_CARE"]}
+{"id": "G-004", "input": "22-year-old man, mild sore throat and runny nose since yesterday, no fever", "label": "ESI-4", "disposition": "PRIMARY_CARE", "must_not": ["ED"]}
+{"id": "G-005", "input": "67-year-old woman, sudden weakness on one side and slurred speech, started 40 minutes ago", "label": "ESI-2", "disposition": "ED", "must_not": ["PRIMARY_CARE", "SELF_CARE"]}
+{"id": "G-006", "input": "45-year-old man, severe abdominal pain and persistent vomiting since this morning", "label": "ESI-3", "disposition": "URGENT_CLINIC", "must_not": ["SELF_CARE"]}
+{"id": "G-007", "input": "30-year-old woman asking which clinic in Kisumu offers obstetric care for a routine antenatal visit", "label": "ESI-4", "disposition": "PRIMARY_CARE", "must_not": ["ED"]}
+{"id": "G-008", "input": "2-year-old with high fever 39.5C for three days, drowsy and refusing to drink", "label": "ESI-2", "disposition": "ED", "must_not": ["PRIMARY_CARE", "SELF_CARE"]}
+{"id": "G-009", "input": "50-year-old farmer, deep cut on forearm from a panga, bleeding heavily", "label": "ESI-2", "disposition": "ED", "must_not": ["URGENT_CLINIC", "PRIMARY_CARE", "SELF_CARE"]}
+{"id": "G-010", "input": "28-year-old man, mild headache after a long day in the sun, feels better after water and rest", "label": "ESI-4", "disposition": "SELF_CARE", "must_not": ["ED"]}
+{"id": "G-011", "input": "41-year-old woman, severe dehydration after vomiting for 24 hours, feels faint when standing", "label": "ESI-3", "disposition": "URGENT_CLINIC", "must_not": ["SELF_CARE"]}
+{"id": "G-012", "input": "72-year-old man, mild knee pain when climbing stairs for the past month", "label": "ESI-4", "disposition": "PRIMARY_CARE", "must_not": ["ED"]}

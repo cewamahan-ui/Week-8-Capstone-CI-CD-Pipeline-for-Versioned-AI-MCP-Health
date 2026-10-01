@@ -1,0 +1,63 @@
+# AfyaPlus Week 8 - versioned app + MCP with a health gate between
+# build and "deployed". The mcp_health service fails the compose up
+# (non-zero exit) if the MCP contract is broken, mirroring CI.
+
+services:
+  triage_api:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      args:
+        APP_VERSION: 1.3.0-candidate
+        RELEASE_TAG: v1.3.0-candidate
+        BUILD_SHA: ${BUILD_SHA:-dev}
+    image: afyaplus-triage:v1.3.0-candidate
+    container_name: afyaplus_triage_w8
+    environment:
+      - SERVICE_NAME=afyaplus-triage
+      - PROMPT_VERSION=${PROMPT_VERSION:-1.2.0}   # rollback: set 1.2.0
+      - RATE_LIMIT_CALLS=5
+      - RATE_LIMIT_WINDOW_SECONDS=60
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=3).status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - afyaplus-net
+
+  mcp_server:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: afyaplus-triage:v1.3.0-candidate
+    container_name: afyaplus_mcp_w8
+    command: ["python", "logistics_mcp_versioned.py"]
+    environment:
+      - MCP_PORT=8765
+      - MCP_TRANSPORT=streamable-http
+    expose:
+      - "8765"
+    restart: unless-stopped
+    networks:
+      - afyaplus-net
+
+  # The Deliverable 4 gate, running where the deploy happens: exits 1
+  # and blocks `compose up --exit-code-from` if the MCP contract breaks.
+  mcp_health:
+    image: afyaplus-triage:v1.3.0-candidate
+    container_name: afyaplus_mcp_health_w8
+    command: ["python", "scripts/check_mcp_health.py", "--url", "http://mcp_server:8765/mcp"]
+    depends_on:
+      - mcp_server
+    restart: "no"
+    networks:
+      - afyaplus-net
+
+networks:
+  afyaplus-net:
+    name: afyaplus-w8-net

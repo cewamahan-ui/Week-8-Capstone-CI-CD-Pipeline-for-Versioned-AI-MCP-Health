@@ -1,0 +1,4 @@
+$ C:\Users\RAJ\AppData\Local\Python\pythoncore-3.14-64\python.exe scripts/make_release_tag.py --check
+(expected exit 0; actual exit 0)
+----------------------------------------------------------------------
+TAG-CHECK OK: v1.3.0-candidate aligns app=1.3.0-candidate, mcp=1.3.0-candidate, prompt=1.2.0 (sha 5b50e6eafb2ff2ff), model=triage-stub-v1

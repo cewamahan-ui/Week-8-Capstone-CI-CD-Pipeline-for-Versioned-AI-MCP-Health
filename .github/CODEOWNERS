@@ -1,0 +1,14 @@
+# CODEOWNERS - Week 8 branch protection.
+# clinical_ops signs off anything that can change patient-facing
+# triage behaviour; ml-eng owns the plumbing around it.
+
+# Prompt bundles and their pin - clinical approval required.
+/prompts/            @clinical_ops @ml-eng
+/evals/              @clinical_ops @ml-eng
+/fixtures/quarantine.json   @clinical_ops @ml-eng
+
+# Runtime config that can flip behaviour (prompt_version, gates).
+/config/             @clinical_ops @ml-eng
+
+# Everything else - engineering review.
+/                    @ml-eng

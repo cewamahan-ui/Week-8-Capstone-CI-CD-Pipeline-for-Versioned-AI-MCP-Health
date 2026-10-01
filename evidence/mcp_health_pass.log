@@ -1,0 +1,86 @@
+$ C:\Users\RAJ\AppData\Local\Python\pythoncore-3.14-64\python.exe scripts/check_mcp_health.py
+(expected exit 0; actual exit 0)
+----------------------------------------------------------------------
+{
+  "mode": "stub:in-process",
+  "probe": {
+    "handshake": true,
+    "protocol": "in-process",
+    "tools": [
+      "find_clinic_by_county",
+      "plan_delivery_route"
+    ],
+    "resources": [
+      "clinics://catalog"
+    ],
+    "server_version": "1.3.0-candidate",
+    "release_tag": "v1.3.0-candidate",
+    "calls": {
+      "find_clinic_by_county": {
+        "ok": true,
+        "sample": {
+          "county": "nairobi",
+          "count": 2,
+          "clinics": [
+            {
+              "id": "CL-001",
+              "name": "Kenyatta National Hospital",
+              "county": "Nairobi",
+              "lat": -1.3013,
+              "lon": 36.807,
+              "services": [
+                "emergency",
+                "obstetric",
+                "pediatric",
+                "surgery",
+                "imaging"
+              ],
+              "opening_hours": "24/7",
+              "phone": "+254-20-2726300"
+            },
+            {
+              "id": "CL-002",
+              "name": "Mbagathi District Hospital",
+              "county": "Nairobi",
+              "lat": -1.31,
+              "lon": 36.79,
+              "services": [
+                "emergency",
+                "obstetric",
+                "pediatric"
+              ],
+              "opening_hours": "24/7",
+              "phone": "+254-20-2724711"
+            }
+          ]
+        }
+      },
+      "plan_delivery_route": {
+        "ok": true,
+        "sample": {
+          "origin": "nairobi",
+          "destination_county": "kisumu",
+          "vehicle": "van",
+          "heuristic": "nearest-neighbour greedy, not optimal",
+          "stops": [
+            {
+              "clinic_id": "CL-003",
+              "name": "Jaramogi Oginga Odinga Teaching & Referral Hospital",
+              "leg_km": 264.5
+            },
+            {
+              "clinic_id": "CL-004",
+              "name": "Kisumu County Referral Hospital",
+              "leg_km": 1.3
+            }
+          ],
+          "total_km": 265.8,
+          "estimated_hours": 4.43
+        }
+      }
+    }
+  },
+  "problems": []
+}
+MCP-HEALTH PASS: handshake ok, tools=['find_clinic_by_county', 'plan_delivery_route'], version=1.3.0-candidate
+2026-10-01 18:55:42,516 INFO afyaplus.mcp.versioned find_clinic_by_county ok trace_id=- county=nairobi

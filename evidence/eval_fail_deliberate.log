@@ -1,0 +1,20 @@
+$ C:\Users\RAJ\AppData\Local\Python\pythoncore-3.14-64\python.exe eval_prompts.py --self-test
+(expected exit non-zero; actual exit 1)
+----------------------------------------------------------------------
+--- SELF-TEST (deliberately broken classifier) ---
+{
+  "eval_score": 0.2727,
+  "threshold": 0.85,
+  "hard_failures": [
+    "G-001",
+    "G-002",
+    "G-003",
+    "G-005",
+    "G-006",
+    "G-008",
+    "G-009",
+    "G-011"
+  ],
+  "passed": false
+}
+SELF-TEST OK: gate failed closed on the regression (exit 1 is the demonstration).

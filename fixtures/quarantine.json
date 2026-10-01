@@ -1,0 +1,15 @@
+{
+  "note": "Cases where the candidate prompt may disagree WITHOUT failing the gate, each with a recorded reason. Kept visible on purpose: silent exemptions are how gates rot. Expired exemptions are re-admitted to the gate automatically (see E-EXAMPLE, kept as the worked example of that behaviour).",
+  "exemptions": [
+    {
+      "id": "G-010",
+      "reason": "Mild headache SELF_CARE vs PRIMARY_CARE is a known stub boundary; clinical_ops accepted the disagreement in the 1.2.0 review (PR #12).",
+      "expires": "2026-10-31"
+    },
+    {
+      "id": "E-EXAMPLE",
+      "reason": "Worked example of expiry: this exemption is already in the past, so if this id ever appeared in the golden set it would COUNT against the gate again. Demonstrates the re-admission rule.",
+      "expires": "2026-08-01"
+    }
+  ]
+}
