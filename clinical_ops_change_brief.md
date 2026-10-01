@@ -38,7 +38,9 @@ The full 01:00 procedure is in `runbook.md`, section 3.
 ## Who approved
 
 CODEOWNERS requires clinical_ops and ml-eng review on any change to
-prompts, eval cases, or config. Approval is recorded on the PR.
+prompts, eval cases, or config. Approval is recorded on PR #1
+(https://github.com/cewamahan-ui/Week-8-Capstone-CI-CD-Pipeline-for-Versioned-AI-MCP-Health/pull/1),
+which also carries the green CI gate runs for this change.
 
 ## Go or no-go
 
